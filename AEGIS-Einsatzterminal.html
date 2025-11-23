@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A.E.G.I.S. Einsatzterminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutrals (bg-gray-100, text-gray-800, accent-blue-600) -->
+    <!-- Application Structure Plan: SPA im "A.E.G.I.S. Terminal"-Stil. Startet mit dem Briefing, das die Startkoordinaten liefert. Haupt-UI ist ein Missions-Hub mit 6 Stationen in der NEUEN Reihenfolge (Dagon, Shub, Tsathoggua, Nyarlathotep, Hastur, Cthulhu). Jede Station erfordert einen Code-Input. Bei korrektem Code validiert die App, schaltet die nächste Station frei und bietet einen GPX-Download-Link zur nächsten Koordinate an, um die direkte Eingabe zu vermeiden. -->
+    <!-- Visualization & Content Choices: Keine Charts. Fokus auf textueller Inhaltsdarstellung und UI-Interaktion. Die primäre Interaktion ist die Code-Validierung und der nachfolgende GPX-Download, was die Verbindung zur physischen GPS-Jagd optimiert. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Die status-locked Klasse wird entfernt, um Interaktion auf Geräten zu ermöglichen, funktioniert aber als visueller Indikator */
+        .status-locked {
+            filter: grayscale(100%) opacity(60%);
+            pointer-events: none; /* Deaktiviert Klicks */
+        }
+        .status-unlocked {
+            pointer-events: all;
+        }
+        .status-completed {
+            border-color: #22c55e; /* green-500 */
+            background-color: #f0fdf4; /* green-50 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-lg overflow-hidden">
+        
+        <!-- Header -->
+        <header class="bg-gray-800 text-white p-5 shadow-md">
+            <h1 class="text-2xl md:text-3xl font-bold text-center uppercase tracking-wider">A.E.G.I.S. Einsatzterminal</h1>
+            <p class="text-center text-gray-300 text-sm">Alliance of Elite Guardians against Interdimensional Shifts</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex flex-col md:flex-row">
+
+            <!-- Navigation -->
+            <nav class="w-full md:w-1/4 bg-gray-200 p-4 border-b md:border-b-0 md:border-r border-gray-300">
+                <h2 class="text-lg font-semibold mb-4 uppercase text-gray-700">Navigation</h2>
+                <ul class="space-y-2">
+                    <li><button data-target="view-briefing" class="nav-button w-full text-left p-3 rounded-lg bg-blue-600 text-white font-semibold shadow">1. Einsatzbriefing</button></li>
+                    <li><button data-target="view-mission" class="nav-button w-full text-left p-3 rounded-lg hover:bg-gray-300 font-medium text-gray-700">2. Missions-Hub</button></li>
+                </ul>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="w-full md:w-3/4 p-6 md:p-10 bg-gray-50">
+
+                <!-- View: Briefing -->
+                <section id="view-briefing" class="view-content">
+                    <h2 class="text-3xl font-bold mb-4 text-gray-800 border-b pb-2">HOCHKLASSIFIZIERT – EINSATZBEFEHL GAMMA-6</h2>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-inner border border-gray-200 space-y-4 text-base leading-relaxed">
+                        <p><strong>An:</strong> Team "Die Kosmischen Kadetten" (Codename: Kinder der Wahrheit)</p>
+                        <p><strong>Von:</strong> Sektorleitung Österreich-Ost</p>
+                        <p><strong>Betreff:</strong> Unmittelbare Bedrohung durch Interdimensionale Verschiebung (I.V.) – Schmuckerau, Wiener Neustadt</p>
+                        
+                        <hr class="my-4">
+
+                        <p class="text-red-600 font-bold text-lg">STATUS DER BEDROHUNG: KRITISCH – PORTAL AKTIV</p>
+
+                        <p>Sehr geehrte Nachwuchs-Wächter,</p>
+                        <p>Willkommen bei A.E.G.I.S. Sie wurden nicht zufällig ausgewählt. Ihre einzigartige Immunität gegenüber dem psionischen Einfluss der sogenannten "Uralten" macht Sie zu unserer letzten und einzigen Hoffnung. Die Zukunft der Menschheit liegt in Ihren Händen.</p>
+                        
+                        <p>Der Verursacher dieser Krise ist <strong>Dr. Eldritch</strong>, einst ein brillanter Chemiker, der aus Verzweiflung in die dunkle Kunst der Alchemie abglitt. Er geriet in den Bann des uralten Grimmoires – das <strong>Nekronomikon</strong> – und wurde gezwungen, den außerweltlichen Wesen zu dienen. Er hat in der <strong>Schmuckerau</strong> in Wiener Neustadt ein Dimensionsportal errichtet.</p>
+                        
+                        <p>Kurz bevor sein Verstand vollständig zerfiel, kontaktierte Dr. Eldritch uns. Er schaffte es, einen Satz verschlüsselter Notizen zu verstecken, die den Schlüssel zur Zerstörung des Portals enthalten. Der Preis für seine Flucht vor der totalen Kontrolle war die Umwandlung dieser Notizen in unlösbare Rätsel für jeden, der nicht <strong>immun</strong> ist (also: für jeden Erwachsenen).</p>
+
+                        <h3 class="text-xl font-semibold mt-4">IHR AUFTRAG:</h3>
+                        <p>Das Portal ist durch <strong>sechs Statuetten</strong> geschützt. Sie müssen diese Statuetten in der richtigen Reihenfolge finden und aus ihrem Versteck entfernen, um die Energiebarriere des Portals zu schwächen.</p>
+                        <ol class="list-decimal list-inside space-y-2 pl-4">
+                            <li><strong>Folgen Sie den Notizen:</strong> Wir übergeben Ihnen die Briefe von Dr. Eldritch. (HINWEIS: Sie finden diese an den jeweiligen Stationen).</li>
+                            <li><strong>Lösen Sie die Rätsel:</strong> Die Lösung jedes Rätsels ist ein Code, den Sie in diesem Terminal eingeben müssen.</li>
+                            <li><strong>Sichern Sie das Artefakt:</strong> Finden Sie an den Koordinaten die Statuette.</li>
+                            <li><strong>Zerstören Sie das Portal:</strong> Das letzte Artefakt befindet sich beim Portal selbst.</li>
+                        </ol>
+
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mt-6">
+                            <h3 class="text-lg font-bold text-blue-800">STARTKOORDINATEN (Station 1)</h3>
+                            <p class="text-gray-700">Begeben Sie sich umgehend dorthin, um Dr. Eldritchs erste Notiz (betreffend **Dagon**) zu finden.</p>
+                            <p class="text-2xl font-mono font-bold text-black mt-2">N 47° 52.880'</p>
+                            <p class="text-2xl font-mono font-bold text-black">E 16° 15.110'</p>
+                        </div>
+                        
+                        <button id="accept-mission-button" class="mt-8 w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-lg hover:bg-blue-700 transition duration-300">
+                            Mission annehmen & Missions-Hub aktivieren
+                        </button>
+                    </div>
+                </section>
+
+                <!-- View: Mission Hub -->
+                <section id="view-mission" class="view-content hidden">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Missions-Hub: Portal-Status</h2>
+                    
+                    <div id="mission-complete-banner" class="hidden bg-green-600 text-white p-6 rounded-lg shadow-lg text-center mb-6">
+                        <h3 class="text-3xl font-bold">MISSION ERFOLGREICH!</h3>
+                        <p class="text-lg mt-2">Team "Die Kosmischen Kadetten" hat das Dimensionsportal geschlossen und die Menschheit gerettet. Ausgezeichnete Arbeit, Wächter! A.E.G.I.S. ist stolz auf Sie.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        
+                        <!-- Station 1: Dagon -->
+                        <div id="station-1" class="station-card bg-white p-6 rounded-lg shadow-lg border-4 border-blue-500 status-unlocked">
+                            <h3 class="text-xl font-bold mb-3 text-gray-800">Station 1: DAGON (Wasser-Vater)</h3>
+                            <div class="station-content">
+                                <p class="text-gray-600 mb-4">Begeben Sie sich zu den Startkoordinaten, finden Sie Dr. Eldritchs Notiz und lösen Sie das Rätsel.</p>
+                                <label for="code-1" class="font-semibold text-gray-700">Dagon-Code (7 Ziffern):</label>
+                                <input type="text" id="code-1" class="w-full p-2 border border-gray-300 rounded-lg mt-2 font-mono" maxlength="7">
+                                <button data-station="1" class="submit-code-button w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg mt-4 hover:bg-blue-700 transition">Code übermitteln</button>
+                                <p data-station="1" class="error-message text-red-600 font-medium mt-2 hidden">Fehler: Code inkorrekt. Überprüfen Sie die Notiz.</p>
+                            </div>
+                            <div data-station="1" class="success-content hidden mt-4 text-sm text-gray-700">
+                                <p class="font-bold text-green-600 text-lg mb-2">Code Akzeptiert! Artefakt 1 gesichert.</p>
+                                <p class="font-semibold mb-2">Laden Sie die GPX-Datei für die nächste Station (Shub-Niggurath) herunter:</p>
+                                <a href="2Shub.gpx" download="Station_2_Shub_Niggurath.gpx" class="w-full inline-block text-center bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">
+                                    GPX-Download (Station 2)
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Station 2: Shub-Niggurath -->
+                        <div id="station-2" class="station-card bg-white p-6 rounded-lg shadow-lg border-4 border-gray-300 status-locked">
+                            <h3 class="text-xl font-bold mb-3 text-gray-800">Station 2: SHUB-NIGGURATH (Wald-Mutter)</h3>
+                            <div class="station-content">
+                                <p class="text-gray-600 mb-4">Folgen Sie der letzten GPX-Datei, finden Sie die neue Notiz und lösen Sie das Rätsel.</p>
+                                <label for="code-2" class="font-semibold text-gray-700">Wald-Mutter-Code (3 Ziffern):</label>
+                                <input type="text" id="code-2" class="w-full p-2 border border-gray-300 rounded-lg mt-2 font-mono" maxlength="3">
+                                <button data-station="2" class="submit-code-button w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg mt-4 hover:bg-blue-700 transition">Code übermitteln</button>
+                                <p data-station="2" class="error-message text-red-600 font-medium mt-2 hidden">Fehler: Code inkorrekt.</p>
+                            </div>
+                            <div data-station="2" class="success-content hidden mt-4 text-sm text-gray-700">
+                                <p class="font-bold text-green-600 text-lg mb-2">Code Akzeptiert! Artefakt 2 gesichert.</p>
+                                <p class="font-semibold mb-2">Laden Sie die GPX-Datei für die nächste Station (Tsathoggua) herunter:</p>
+                                <a href="3Tssothuga.gpx" download="Station_3_Tsathoggua.gpx" class="w-full inline-block text-center bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">
+                                    GPX-Download (Station 3)
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Station 3: Tsathoggua (NEU: Froschgott) -->
+                        <div id="station-3" class="station-card bg-white p-6 rounded-lg shadow-lg border-4 border-gray-300 status-locked">
+                            <h3 class="text-xl font-bold mb-3 text-gray-800">Station 3: TSATHOGGUA (Der Träge Frosch)</h3>
+                            <div class="station-content">
+                                <p class="text-gray-600 mb-4">Folgen Sie der letzten GPX-Datei, finden Sie die neue Notiz und lösen Sie das Rätsel.</p>
+                                <label for="code-3" class="font-semibold text-gray-700">Froschgott-Code (4 Ziffern):</label>
+                                <input type="text" id="code-3" class="w-full p-2 border border-gray-300 rounded-lg mt-2 font-mono" maxlength="4">
+                                <button data-station="3" class="submit-code-button w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg mt-4 hover:bg-blue-700 transition">Code übermitteln</button>
+                                <p data-station="3" class="error-message text-red-600 font-medium mt-2 hidden">Fehler: Code inkorrekt.</p>
+                            </div>
+                            <div data-station="3" class="success-content hidden mt-4 text-sm text-gray-700">
+                                <p class="font-bold text-green-600 text-lg mb-2">Code Akzeptiert! Artefakt 3 gesichert.</p>
+                                <p class="font-semibold mb-2">Laden Sie die GPX-Datei für die nächste Station (Nyarlathotep) herunter:</p>
+                                <a href="4Nyarlatothep.gpx" download="Station_4_Nyarlathotep.gpx" class="w-full inline-block text-center bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">
+                                    GPX-Download (Station 4)
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Station 4: Nyarlathotep (NEU: Bote des Chaos) -->
+                        <div id="station-4" class="station-card bg-white p-6 rounded-lg shadow-lg border-4 border-gray-300 status-locked">
+                            <h3 class="text-xl font-bold mb-3 text-gray-800">Station 4: NYARLATHOTEP (Bote des Chaos)</h3>
+                            <div class="station-content">
+                                <p class="text-gray-600 mb-4">Folgen Sie der letzten GPX-Datei, finden Sie die neue Notiz und lösen Sie das Rätsel.</p>
+                                <label for="code-4" class="font-semibold text-gray-700">Chaos-Code (3 Ziffern):</label>
+                                <input type="text" id="code-4" class="w-full p-2 border border-gray-300 rounded-lg mt-2 font-mono" maxlength="3">
+                                <button data-station="4" class="submit-code-button w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg mt-4 hover:bg-blue-700 transition">Code übermitteln</button>
+                                <p data-station="4" class="error-message text-red-600 font-medium mt-2 hidden">Fehler: Code inkorrekt.</p>
+                            </div>
+                            <div data-station="4" class="success-content hidden mt-4 text-sm text-gray-700">
+                                <p class="font-bold text-green-600 text-lg mb-2">Code Akzeptiert! Artefakt 4 gesichert.</p>
+                                <p class="font-semibold mb-2">Laden Sie die GPX-Datei für die nächste Station (Hastur) herunter:</p>
+                                <a href="5KoenigGelb.gpx" download="Station_5_Hastur.gpx" class="w-full inline-block text-center bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">
+                                    GPX-Download (Station 5)
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Station 5: Hastur (NEU: König in Gelb) -->
+                        <div id="station-5" class="station-card bg-white p-6 rounded-lg shadow-lg border-4 border-gray-300 status-locked">
+                            <h3 class="text-xl font-bold mb-3 text-gray-800">Station 5: HASTUR (König in Gelb)</h3>
+                            <div class="station-content">
+                                <p class="text-gray-600 mb-4">Folgen Sie der letzten GPX-Datei, finden Sie die neue Notiz und lösen Sie das Rätsel.</p>
+                                <label for="code-5" class="font-semibold text-gray-700">König-in-Gelb-Code (1 Ziffer):</label>
+                                <input type="text" id="code-5" class="w-full p-2 border border-gray-300 rounded-lg mt-2 font-mono" maxlength="1">
+                                <button data-station="5" class="submit-code-button w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg mt-4 hover:bg-blue-700 transition">Code übermitteln</button>
+                                <p data-station="5" class="error-message text-red-600 font-medium mt-2 hidden">Fehler: Code inkorrekt.</p>
+                            </div>
+                            <div data-station="5" class="success-content hidden mt-4 text-sm text-gray-700">
+                                <p class="font-bold text-green-600 text-lg mb-2">Code Akzeptiert! Artefakt 5 gesichert.</p>
+                                <p class="font-semibold mb-2">Laden Sie die GPX-Datei für die nächste Station (Cthulhu/Portal) herunter:</p>
+                                <a href="6Cthulhu.gpx" download="Station_6_Cthulhu_Portal.gpx" class="w-full inline-block text-center bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">
+                                    GPX-Download (Station 6)
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Station 6: Cthulhu (FINAL) -->
+                        <div id="station-6" class="station-card bg-white p-6 rounded-lg shadow-lg border-4 border-gray-300 status-locked">
+                            <h3 class="text-xl font-bold mb-3 text-gray-800">Station 6: CTHULHU (Das Portal)</h3>
+                            <div class="station-content">
+                                <p class="text-gray-600 mb-4">Folgen Sie der letzten GPX-Datei, finden Sie die letzte Notiz am Portal-Ort und lösen Sie das Rätsel.</p>
+                                <label for="code-6" class="font-semibold text-gray-700">R'lyeh-Code (3 Ziffern):</label>
+                                <input type="text" id="code-6" class="w-full p-2 border border-gray-300 rounded-lg mt-2 font-mono" maxlength="3">
+                                <button data-station="6" class="submit-code-button w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg mt-4 hover:bg-blue-700 transition">Code übermitteln</button>
+                                <p data-station="6" class="error-message text-red-600 font-medium mt-2 hidden">Fehler: Code inkorrekt.</p>
+                            </div>
+                            <div data-station="6" class="success-content hidden mt-4 text-sm text-gray-700">
+                                <p class="font-bold text-green-600 text-lg mb-2">Code Akzeptiert! Artefakt 6 gesichert.</p>
+                                <p class="font-semibold text-blue-800 text-lg">Das Portal kollabiert! Mission erfüllt!</p>
+                                <p class="text-center font-bold text-xl mt-4">A.E.G.I.S. dankt Ihnen!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- STAAT & LÖSUNGEN (Code aus den Rätsel-Briefen) ---
+            // Die Logik für die Code-Zuordnung folgt der NEUEN Reihenfolge:
+            // 1. Dagon (Code: 2348579)
+            // 2. Shub-Niggurath (Code: 735)
+            // 3. Tsathoggua (Code: 1234) <-- Neu: Alter Code 5
+            // 4. Nyarlathotep (Code: 122) <-- Neu: Alter Code 3
+            // 5. Hastur (Code: 7) <-- Neu: Alter Code 4
+            // 6. Cthulhu (Code: 700)
+            const correctCodes = {
+                "1": "2348579",
+                "2": "735",
+                "3": "1234",
+                "4": "122", 
+                "5": "7",
+                "6": "700"
+            };
+
+            const views = document.querySelectorAll('.view-content');
+            const navButtons = document.querySelectorAll('.nav-button');
+            const acceptMissionButton = document.getElementById('accept-mission-button');
+            const codeButtons = document.querySelectorAll('.submit-code-button');
+
+            // --- NAVIGATION ---
+            function showView(targetId) {
+                views.forEach(view => {
+                    if (view.id === targetId) {
+                        view.classList.remove('hidden');
+                    } else {
+                        view.classList.add('hidden');
+                    }
+                });
+                
+                navButtons.forEach(button => {
+                    if (button.dataset.target === targetId) {
+                        button.classList.add('bg-blue-600', 'text-white', 'font-semibold', 'shadow');
+                        button.classList.remove('hover:bg-gray-300', 'font-medium', 'text-gray-700');
+                    } else {
+                        button.classList.remove('bg-blue-600', 'text-white', 'font-semibold', 'shadow');
+                        button.classList.add('hover:bg-gray-300', 'font-medium', 'text-gray-700');
+                    }
+                });
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => showView(button.dataset.target));
+            });
+
+            acceptMissionButton.addEventListener('click', () => {
+                showView('view-mission');
+                acceptMissionButton.textContent = "Missions-Hub Aktiv";
+                acceptMissionButton.disabled = true;
+                acceptMissionButton.classList.add('opacity-70', 'cursor-not-allowed');
+            });
+
+            // --- RÄTSEL-LOGIK ---
+            codeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const stationNum = button.dataset.station;
+                    const nextStationNum = parseInt(stationNum) + 1;
+                    const input = document.getElementById(`code-${stationNum}`);
+                    const stationCard = document.getElementById(`station-${stationNum}`);
+                    const errorMessage = stationCard.querySelector('.error-message');
+                    
+                    if (input.value.trim() === correctCodes[stationNum]) {
+                        handleCorrectCode(stationNum, nextStationNum, stationCard);
+                    } else {
+                        errorMessage.classList.remove('hidden');
+                        input.classList.add('border-red-500');
+                    }
+                });
+            });
+            
+            function handleCorrectCode(stationNum, nextStationNum, stationCard) {
+                const stationContent = stationCard.querySelector('.station-content');
+                const successContent = stationCard.querySelector('.success-content');
+                const errorMessage = stationCard.querySelector('.error-message');
+                
+                // Verstecke Eingabefeld und zeige Erfolgsmeldung
+                stationContent.classList.add('hidden');
+                successContent.classList.remove('hidden');
+                errorMessage.classList.add('hidden');
+                
+                // Style die Karte als "abgeschlossen"
+                stationCard.classList.add('status-completed');
+                stationCard.classList.remove('border-blue-500', 'border-gray-300');
+
+                // Schalte nächste Station frei
+                if (nextStationNum <= 6) {
+                    const nextStationCard = document.getElementById(`station-${nextStationNum}`);
+                    if (nextStationCard) {
+                        nextStationCard.classList.remove('status-locked');
+                        nextStationCard.classList.add('status-unlocked', 'border-blue-500');
+                        nextStationCard.classList.remove('border-gray-300');
+                    }
+                } else {
+                    // Mission abgeschlossen
+                    document.getElementById('mission-complete-banner').classList.remove('hidden');
+                }
+            }
+            
+            // Initialansicht
+            showView('view-briefing');
+        });
+    </script>
+</body>
+</html>

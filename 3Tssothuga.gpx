@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gpx xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" creator="Groundspeak, Inc. All Rights Reserved. http://www.groundspeak.com" xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.groundspeak.com/cache/1/0 http://www.groundspeak.com/cache/1/0/cache.xsd" xmlns="http://www.topografix.com/GPX/1/0">
+  <name>Cache Listing Generated from Geocaching.com</name>
+  <desc>This is an individual cache generated from Geocaching.com</desc>
+  <author>Account "parabö" From Geocaching.com</author>
+  <email>contact@geocaching.com</email>
+  <url>https://www.geocaching.com</url>
+  <urlname>Geocaching - High Tech Treasure Hunting</urlname>
+  <time>2025-11-23T21:49:37.3170115Z</time>
+  <keywords>cache, geocache</keywords>
+  <bounds minlat="47.820133" minlon="16.22065" maxlat="47.820133" maxlon="16.22065" />
+  <wpt lat="47.820133" lon="16.22065">
+    <time>2025-11-23T00:00:00</time>
+    <name>GCBFM9X</name>
+    <desc>Tssothuga by parabö, Traditional Cache (1.5/1.5)</desc>
+    <url>https://www.geocaching.com/geocache/GCBFM9X</url>
+    <urlname>Tssothuga</urlname>
+    <sym>Geocache</sym>
+    <type>Geocache|Traditional Cache</type>
+    <groundspeak:cache id="10214003" available="False" archived="False" xmlns:groundspeak="http://www.groundspeak.com/cache/1/0">
+      <groundspeak:name>Tssothuga</groundspeak:name>
+      <groundspeak:placed_by>parabö</groundspeak:placed_by>
+      <groundspeak:owner id="1489784">parabö</groundspeak:owner>
+      <groundspeak:type>Traditional Cache</groundspeak:type>
+      <groundspeak:container>Other</groundspeak:container>
+      <groundspeak:difficulty>1.5</groundspeak:difficulty>
+      <groundspeak:terrain>1.5</groundspeak:terrain>
+      <groundspeak:country>Austria</groundspeak:country>
+      <groundspeak:state>Niederösterreich</groundspeak:state>
+      <groundspeak:short_description html="True">
+      </groundspeak:short_description>
+      <groundspeak:long_description html="True">
+      </groundspeak:long_description>
+      <groundspeak:encoded_hints>
+      </groundspeak:encoded_hints>
+      <groundspeak:logs />
+      <groundspeak:travelbugs />
+    </groundspeak:cache>
+  </wpt>
+</gpx>
